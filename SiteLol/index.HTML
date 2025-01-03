@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Summoner Search</title>
+    <style>
+        /* Stilizare pentru fundalul video */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Ascunde scrollbar-ul */
+        }
+        video#background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Redimensionează video-ul pentru a acoperi ecranul */
+            z-index: -1; /* Plasează video-ul în spatele altor elemente */
+        }
+        h1 {
+            color: #ffcc00;
+            margin-top: 50px;
+        }
+        label {
+            font-size: 1.2em;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            font-size: 1em;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: white;
+            background-color: #0070f3;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video pentru fundal -->
+    <video id="background-video" autoplay muted loop>
+        <source src="B4.mp4" type="video/mp4">
+        Browserul tău nu suportă tag-ul video.
+    </video>
+
+    <h1>LoL Summoner Profile</h1>
+    <label for="summonerName">Nume Invocator:</label>
+    <br>
+    <input type="text" id="summonerName" placeholder="Introdu numele invocatorului">
+    <br>
+    <label for="region">Regiune:</label>
+    <br>
+    <select id="region">
+        <option value="br">BR</option>
+        <option value="eune" selected>EUNE</option>
+        <option value="euw">EUW</option>
+        <option value="jp">JP</option>
+        <option value="kr">KR</option>
+        <option value="lan">LAN</option>
+        <option value="las">LAS</option>
+        <option value="na">NA</option>
+        <option value="oce">OCE</option>
+        <option value="tr">TR</option>
+        <option value="ru">RU</option>
+        <option value="ph">PH</option>
+        <option value="sg">SG</option>
+        <option value="th">TH</option>
+        <option value="tw">TW</option>
+        <option value="vn">VN</option>
+    </select>
+    <br>
+    <button id="generateLink">Generează Link</button>
+    <button id="writeNFC">Scrie pe NFC</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        // Generarea linkului
+        document.getElementById("generateLink").addEventListener("click", function () {
+            const name = document.getElementById("summonerName").value.trim();
+            const region = document.getElementById("region").value;
+            if (name) {
+                const url = `https://lolprofile.net/ro/summoner/${region}/${encodeURIComponent(name)}`;
+                const resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = `<p>Link generat: <a href="${url}" target="_blank">${url}</a></p>`;
+            } else {
+                alert("Te rog să introduci un nume de invocator!");
+            }
+        });
+
+        // Scriere pe NFC (Web NFC)
+        document.getElementById("writeNFC").addEventListener("click", async function () {
+            if ("NDEFReader" in window) {
+                try {
+                    const name = document.getElementById("summonerName").value.trim();
+                    const region = document.getElementById("region").value;
+                    if (!name) {
+                        alert("Te rog să introduci un nume de invocator înainte de a scrie pe NFC!");
+                        return;
+                    }
+                    const url = `https://lolprofile.net/ro/summoner/${region}/${encodeURIComponent(name)}`;
+                    const ndef = new NDEFReader();
+                    await ndef.write(url);
+                    alert("Link scris cu succes pe tag-ul NFC!");
+                } catch (error) {
+                    alert(`Eroare la scrierea pe NFC: ${error.message}`);
+                }
+            } else {
+                alert("Dispozitivul tău nu suportă funcționalitatea Web NFC.");
+            }
+        });
+    </script>
+</body>
+</html>
